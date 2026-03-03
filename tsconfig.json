@@ -1,0 +1,47 @@
+// {
+//     "compilerOptions":{
+//         "target": "es6",
+//         "module": "commonjs",
+//         "moduleResolution": "node",
+//         "esModuleInterop": true,
+//         "allowSyntheticDefaultImports": true,
+//         "strict": true,
+//         "outDir": "dist",
+//         "rootDir": "src",
+//         "baseUrl": ".",
+//         "paths": {
+//             "@/" : ["src/"]
+//         }
+//     } ,
+//     "include": ["src",],
+//     "exclude": ["node_modules/"]
+// }
+
+
+
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",                    // modern features + top-level await
+    "module": "NodeNext",                  // best match for Node.js ESM
+    "moduleResolution": "NodeNext",        // required when module = NodeNext
+    "lib": ["ES2023", "DOM"],              // modern JS + browser APIs if needed
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,                  // faster builds
+    "forceConsistentCasingInFileNames": true,
+
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]                     // cleaner alias syntax
+    },
+
+    "sourceMap": true,                     // very helpful for debugging
+    "isolatedModules": true                // faster + required by many tools (tsx, esbuild, etc.)
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
