@@ -8,10 +8,10 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env'});
 
-const API_KEY = process.env.CEREBRAS_API_KEY;
+const API_KEY = process.env.GROQ_API_KEY;
 
 if (!API_KEY) {
-  throw new Error("CEREBRAS_API_KEY is not set in .env");
+  throw new Error("GROQ_API_KEY is not set in .env");
 }
 
 
@@ -23,12 +23,18 @@ const llm = new ChatGroq({
 
 
 const prompt_json = PromptTemplate.fromTemplate(`
-        You are a professional Math Expert, your job is to solve user's questions. 
-        Here is the user question
-        {input}
+You are a professional Math Expert.
 
-        strictly follow the instructions given to you for the output schema
-`)
+Solve the user's question.
+
+User Question:
+{input}
+
+Return the response strictly as a JSON object.
+  [
+    value_of_x :  
+  ]
+`);
 
 
 const prompt_result2 = await prompt_json.invoke({input:"x+4=10, so what will be the x"})
@@ -41,17 +47,27 @@ const prompt_result2 = await prompt_json.invoke({input:"x+4=10, so what will be 
 const result = await llm.invoke(prompt_result2,{
     response_format: {
       type: "json_object",
-      schema: zodToJsonSchema(
-        z.object({
-          "value_of_x": z.number(),
-        }) as any
-       
-      )
+      
     }
 }) as Record<string,any>
 
+/* This is called type assertion ( in other words type casting)
+- as : Treat that value as this type
 
+In typescript Record is utility type, The Record utility type in TypeScript is used to create an object type with specific key and value types.
+
+```js
+type UserAges = {
+  [key: string]: number;
+};
+```
+
+Record<string,any> means:an object where keys are strings and values can be anything.
+*/
 
 const parsed = JSON.parse(result?.content);
 
 console.log(parsed);
+
+// The output parser schema we removed here, because groq model doesn't support that.
+// That just old functionality. and It is way better to parse output using output parser, which is native way with langchain. Not this type of zod like third party integration. Those integrations sometimes not handled well by langchain. and Give Non-explainable, Large errors.
