@@ -1,7 +1,8 @@
 import { ChatFireworks } from "@langchain/community/chat_models/fireworks"
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
-dotenv.config({ path: "../.env" });
+dotenv.config({ path: '../.env', debug: true });
+
 // Assume: Your current working directiory is src/ and you're running this file from src/
 
 // If you're running from root folder then it will be => {path:"./env"}
@@ -50,6 +51,8 @@ const llm = new ChatFireworks({
 
 // Fireworks is no longer free
 // It changes at least $0.1 for every model
+
+// Error message: 'Account woceli3554-y8jgcmk2s(tempmail account) is suspended, possibly due to reaching the monthly spending limit or failure to pay past invoices. Please go to https://fireworks.ai/account/billing for more information.',
 
 
 /*
