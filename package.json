@@ -3,8 +3,12 @@
 	"dependencies": {
 		"@langchain/core": "^1.1.31",
 		"@langchain/groq": "^1.1.4",
+		"@langchain/tavily": "^1.2.0",
 		"dotenv": "^17.3.1",
 		"groq": "^5.13.0",
+		"langchain": "^1.2.30",
+		"marked": "^17.0.4",
+		"marked-terminal": "^7.3.0",
 		"zod": "^4.3.6",
 		"zod-to-json-schema": "^3.25.1"
 	}
