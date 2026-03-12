@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import {HumanMessage, tool} from "langchain";
 import z, { number } from "zod";
 import { RunnableLambda } from "@langchain/core/runnables";
-dotenv.config({ path: '../.env', debug: true });
+dotenv.config({ path: '../.env', debug: false });
 
 
 // Add markdown Preview support
@@ -160,4 +160,4 @@ const toolChain = RunnableLambda.from(async (userInput:string) => {
 
 const result = await toolChain.invoke('What is current wheather in New York ?');
 // console.log(marked(result["content"]))
-console.log("result : ",result);
+console.log("result : ",marked(result.content));
