@@ -8,13 +8,14 @@ dotenv.config({ path: '../.env', debug: false });
 
 
 // Add markdown Preview support
-import { marked } from "marked";
+import { marked, Renderer} from "marked";
 import TerminalRenderer from "marked-terminal";
 
-marked.setOptions({
-  renderer: new TerminalRenderer()
-});
 
+marked.setOptions({
+  renderer: new TerminalRenderer() as unknown as Renderer,
+});
+// Use type assertion to avoid the error.
 
 const API_KEY = process.env.TAVILY_API_KEY;
 if (!API_KEY) {
@@ -160,4 +161,4 @@ const toolChain = RunnableLambda.from(async (userInput:string) => {
 
 const result = await toolChain.invoke('What is current wheather in New York ?');
 // console.log(marked(result["content"]))
-console.log("result : ",marked(result.content));
+console.log("result : ",marked(result.content as any));
