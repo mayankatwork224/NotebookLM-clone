@@ -1,15 +1,21 @@
 {
 	"type": "module",
 	"dependencies": {
+		"@langchain/classic": "^1.0.24",
+		"@langchain/cohere": "^1.0.4",
+		"@langchain/community": "^1.1.24",
 		"@langchain/core": "^1.1.31",
 		"@langchain/groq": "^1.1.4",
 		"@langchain/langgraph": "^1.2.2",
+		"@langchain/pinecone": "^1.0.1",
 		"@langchain/tavily": "^1.2.0",
+		"@langchain/textsplitters": "^1.0.1",
+		"@pinecone-database/pinecone": "^5.0.2",
+		"cheerio": "^1.2.0",
+		"cli-markdown": "^3.5.1",
 		"dotenv": "^17.3.1",
 		"groq": "^5.13.0",
 		"langchain": "^1.2.30",
-		"marked": "^17.0.4",
-		"marked-terminal": "^7.3.0",
 		"zod": "^4.3.6",
 		"zod-to-json-schema": "^3.25.1"
 	},

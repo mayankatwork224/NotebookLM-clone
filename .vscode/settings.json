@@ -1,7 +1,8 @@
 {
     "postman.settings.dotenv-detection-notification-visibility": false,
     "editor.mouseWheelZoom": true,
-    "terminal.integrated.fontSize": 19,
+    "terminal.integrated.fontSize": 10,
     "editor.wordWrap": "on",
+    "workbench.tree.enableStickyScroll": false
 
 }

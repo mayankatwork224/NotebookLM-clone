@@ -1,0 +1,16 @@
+import { PromptTemplate } from "@langchain/core/prompts";
+
+export const response_generator_prompt = PromptTemplate.fromTemplate(`
+    We exposed this into several related queries to cover different perspectives:
+    {questions}
+
+    We retrive the following documents based on these queries:
+    {retrieved_docs}
+
+    Your task:
+    1. Step back and consider the original question in a broad, general sense.
+    2. Review the retrieved information across all queries carefully.
+    3. Synthesize a single, coherent answer that directly addresses the user's original question
+    4. If different queries highlight different aspects, integrate them into one clear explanation
+    5. Be concise, structured, and clear. When useful, cite or reference information from the retrieved docs. 
+`)

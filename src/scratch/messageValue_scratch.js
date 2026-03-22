@@ -1,4 +1,4 @@
-/*
+/* for ...in vs for...of loop
 
 for (const variable in object)
   statement
