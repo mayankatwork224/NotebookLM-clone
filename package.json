@@ -1,5 +1,18 @@
 {
-	"type": "module",
+	"name": "notebook-lm-clone",
+	"version": "1.0.0",
+	"description": "",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error no test specified\" && exit 1",
+		"start": "node dist/index.js",
+		"build": "tsc",
+		"dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
 	"dependencies": {
 		"@cerebras/cerebras_cloud_sdk": "^1.64.1",
 		"@langchain/classic": "^1.0.24",
@@ -14,16 +27,23 @@
 		"@langchain/tavily": "^1.2.0",
 		"@langchain/textsplitters": "^1.0.1",
 		"@pinecone-database/pinecone": "^5.0.2",
+		"@types/cors": "^2.8.19",
 		"cheerio": "^1.2.0",
 		"cli-markdown": "^3.5.1",
+		"cors": "^2.8.6",
 		"dotenv": "^16.4.5",
+		"express": "^5.2.1",
 		"groq": "^5.13.0",
 		"langchain": "^1.2.30",
 		"openai": "^4.62.1",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
 		"zod": "^3.23.8",
 		"zod-to-json-schema": "^3.25.1"
 	},
 	"devDependencies": {
-		"@types/marked-terminal": "^6.1.1"
+		"@types/express": "^5.0.6",
+		"@types/marked-terminal": "^6.1.1",
+		"nodemon": "^3.1.14"
 	}
 }
