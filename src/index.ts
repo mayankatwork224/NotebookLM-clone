@@ -1,19 +1,13 @@
+import express from "express";
 
-let age: number  = 20
-console.log(age)
+import dotenv from "dotenv";
+import { bootStrap } from "./app/bootstrap";
+dotenv.config({ path: ".env", debug: false });
+// You run code from the root folder(i.e. NotebookLM-clone). so that consider as root. and ./.env path relative to it. Then no matter where really the index.ts file is placed.
 
-// modify the package.json and run the 
-// npm run build
+const app = express();
+
+const PORT = parseInt(process.env.PORT as string);
 
 
-/*
-tsc
-This will compile all typescript file present in your src/ directory. This is completely depends on your tsconfig.json configuration
-
-tsc index.ts
-It will compile the typescript file and convert it to the src/index.js file
-
-npx ts-node index.ts
-It will execute the file without creating any intermidatory(Actually it creates the intermediatory inside main Memory RAM) 
-
-*/
+bootStrap(app,PORT)
