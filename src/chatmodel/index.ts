@@ -5,7 +5,16 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../../.env', debug: true });
+
+// This code runs only when file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  dotenv.config({ path: '../../.env', debug: true });
+}
+
+
+// ✅ Should be (from chatmodel folder to root).  Suppose you run briefing_doc.ts from "src/" folder. 
+// src folder consider as root and find the "../.env" path, and then Run
+dotenv.config({ path: '../.env', debug: true });
 
 // if the model is not available or rate limits exceed, time out or any other reason then automatically swith another model instead of code crash
 

@@ -4,8 +4,10 @@
 // Replace with your own implementations:
 
 function splitListOfDocs(
-    docs: Document[], 
-    lengthFunc: (docs: Document[]) => Promise<number>, 
+    docs: Document[],
+    lengthFunc: (docs: Document[]) => Promise<number>, // expects lenghtFunction is async function, because returns Promise()
+    // Promise() : A Promise in JavaScript is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It acts as a placeholder for a value that is not yet availabl
+
     tokenMax: number
 ): Document[][] {
     const result: Document[][] = [];
@@ -29,7 +31,7 @@ function splitListOfDocs(
 }
 
 async function collapseDocs(
-    docs: Document[], 
+    docs: Document[],
     combineFunc: (input: Document[]) => Promise<string>
 ): Promise<Document> {
     const result = await combineFunc(docs);
@@ -44,11 +46,40 @@ import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/
 import { ChatGroq } from "@langchain/groq";
 
 import dotenv from 'dotenv';
-import { _parse } from "zod/v4/core";
-dotenv.config({ 
-    path: '../.env', 
+dotenv.config({
+    path: '../.env',
     debug: false
 });
+
+
+
+// Ask LM-Arena to review the code. So it give the sugeesstion 
+// Code Quality Improvements: Move helper functions before usage
+
+// 1. Imports
+// 2. Config (dotenv, loader, etc.)
+// 3. Helper functions (approximateTokens, lengthFunction, splitListOfDocs, collapseDocs)
+// 4. Graph definitions
+// 5. Execution
+
+
+
+
+
+// You can create a config object
+// const CONFIG = {
+    // chunkSize: 1000,
+    // chunkOverlap: 200,
+    // tokenMax: 1000,
+    // modelName: "llama-3.3-70b-versatile",
+    // temperature: 0.7,
+    // recursionLimit: 10
+// } as const;
+
+// This way you need to change(Tweak) settings at one place and without find and replace in entire code 
+// You can use the config object as, 
+// model : CONFIG.modelName
+
 
 const loader = new CheerioWebBaseLoader('https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/');
 
@@ -62,16 +93,16 @@ const splitDocs = await textSplitter.splitDocuments(docs)
 
 
 const llm = new ChatGroq({
-//   model: "llama-3.1-8b-instant",
-  model: "llama-3.3-70b-versatile", 
-  temperature: 0.7,
-  apiKey: process.env.GROQ_API_KEY
+    //   model: "llama-3.1-8b-instant",
+    model: "llama-3.3-70b-versatile",
+    temperature: 0.7,
+    apiKey: process.env.GROQ_API_KEY
 })
 
 
 let tokenMax = 1000;
 
-function approximateTokens(text: string): number{
+function approximateTokens(text: string): number {
 
     // Roughly:  1 token ≈ 4 characters (English text)
 
@@ -80,7 +111,7 @@ function approximateTokens(text: string): number{
 }
 
 
-async function lengthFunction(documents:Document[]) {
+async function lengthFunction(documents: Document[]) {
 
     // We use this function in order to calculate no. of tokens in entire Document array 
     // Here, Document[] array. Entire document convert to chunks those chunks as Doucment object. and combined them as we get Document[]
@@ -93,14 +124,14 @@ async function lengthFunction(documents:Document[]) {
     ...
 
     */
- 
+
 
     const tokenCounts = documents.map(doc => approximateTokens(doc.pageContent));
     // return a new array with transformed elements
 
     // []
 
-    return tokenCounts.reduce((sum,count) => sum+count, 0)
+    return tokenCounts.reduce((sum, count) => sum + count, 0)
     // reducer() is just from map(), filter(), reduce()
     // till now this what we're using. you've not noticed yet. 
 
@@ -121,7 +152,7 @@ async function lengthFunction(documents:Document[]) {
 
 
     // the 2nd argumnt we passed "0" that is initial value of "sum". 0 where calculation starts.
-    
+
 
 
 
@@ -162,10 +193,10 @@ const OverallState = Annotation.Root({
     contents: Annotation<string[]>,
 
     summaries: Annotation<string[]>({
-        reducer: (state,update) => state.concat(update)
+        reducer: (state, update) => state.concat(update)
     }),
     // Here we use reducer function. This is because we want to combine all summaries we generate from individual nodes back into one list. -- this is essentially the reduce part
-    
+
     collapsedSummaries: Annotation<Document[]>,
 
     finalSummary: Annotation<string>
@@ -174,7 +205,7 @@ const OverallState = Annotation.Root({
 
 
 // This will be the state of the node that will "map" all document in order to generate summaries
-interface SummaryState{
+interface SummaryState {
     content: string;
 }
 
@@ -184,15 +215,15 @@ interface SummaryState{
 // Here we generate a summar for given document
 const generateSummary = async (
     state: SummaryState
-): Promise<{ summaries: string[]}> => {
+): Promise<{ summaries: string[] }> => {
     const mapPrompt = ChatPromptTemplate.fromMessages([
-        ["user","Write a concise summary of the following: \n\n{content}"]
+        ["user", "Write a concise summary of the following: \n\n{content}"]
     ]);
 
-    const prompt = await mapPrompt.invoke({content: state.content});
+    const prompt = await mapPrompt.invoke({ content: state.content });
     const response = await llm.invoke(prompt)
 
-    return {summaries : [String(response.content)]}
+    return { summaries: [String(response.content)] }
 }
 
 
@@ -201,20 +232,19 @@ const mapSummaries = (state: typeof OverallState.State) => {
 
 
     return state.contents.map(
-        (content) => new Send("generateSummary", {content})
+        (content) => new Send("generateSummary", { content })
     )
     // We will return list of Send() objects. Each Send() object consists of the name of the node in the graph as well as the state(data) to send to that node
 }
 
 
-const collectSummaries = async (state: typeof OverallState.State) => 
-    {
-        return {
-            collapsedSummaries: state.summaries.map(
-                (summary)=> new Document({pageContent: summary})
-            )
-        }
+const collectSummaries = async (state: typeof OverallState.State) => {
+    return {
+        collapsedSummaries: state.summaries.map(
+            (summary) => new Document({ pageContent: summary })
+        )
     }
+}
 
 
 // ✅ Fixed
@@ -244,19 +274,30 @@ const collapseSummaries = async (state: typeof OverallState.State) => {
 
 
     const results = [];
-    for(const docList of docLists){
+    for (const docList of docLists) {
         results.push(await collapseDocs(docList, _reduce))
     }
-    return { collapsedSummaries : results};
+    return { collapsedSummaries: results };
 }
 
 
 
-async function shouldCollapse(state: typeof OverallState.State){
+async function shouldCollapse(state: typeof OverallState.State) {
     let numTokens = await lengthFunction(state.collapsedSummaries); // collapasesSummaries infers to array of Document(). You can hover and check
+
+    // Potential infinite loop risk:  If a single document in collapsedSummaries is > tokenMax, the graph will loop forever. Add a safeguard:
+
+    // ✅ Add safety check - if only 1 doc left and still too long, give up
+    if (state.collapsedSummaries.length === 1 && numTokens > tokenMax) {
+        console.warn("⚠️ Single document exceeds tokenMax, proceeding anyway");
+        return "generateFinalSummary";
+    }
+
+
+
     if (numTokens > tokenMax) {
         return "collapseSummaries"
-    }else {
+    } else {
         return "generateFinalSummary"
     }
 }
@@ -265,7 +306,7 @@ async function shouldCollapse(state: typeof OverallState.State){
 
 const generateFinalSummary = async (state: typeof OverallState.State) => {
     const response = await _reduce(state.collapsedSummaries);
-    return {finalSummary: response }
+    return { finalSummary: response }
 }
 
 
@@ -273,9 +314,9 @@ const generateFinalSummary = async (state: typeof OverallState.State) => {
 
 const graph = new StateGraph(OverallState)
     .addNode("generateSummary", generateSummary)
-    .addNode("collectSummaries",collectSummaries)
+    .addNode("collectSummaries", collectSummaries)
     .addNode("collapseSummaries", collapseSummaries)
-    .addNode("generateFinalSummary",generateFinalSummary)
+    .addNode("generateFinalSummary", generateFinalSummary)
 
     .addConditionalEdges("__start__", mapSummaries, ["generateSummary"])
     // __start__ is starting node
@@ -284,8 +325,8 @@ const graph = new StateGraph(OverallState)
 
     // function returns something like : "return new Send("generateSummary", { ... })" and graph moves to "generateSummary" 
 
-    .addEdge("generateSummary","collectSummaries")
-    .addConditionalEdges("collectSummaries",shouldCollapse,[
+    .addEdge("generateSummary", "collectSummaries")
+    .addConditionalEdges("collectSummaries", shouldCollapse, [
         "collapseSummaries",
         "generateFinalSummary"
     ])
@@ -302,9 +343,9 @@ const app = graph.compile()
 let finalSummary = null;
 
 for await (const step of await app.stream(
-    {contents : splitDocs.map((doc) => doc.pageContent)},
-    {recursionLimit: 10}
-)){
+    { contents: splitDocs.map((doc) => doc.pageContent) },
+    { recursionLimit: 10 }
+)) {
     console.log(Object.keys(step))
     // if(step.hasOwnProperty("generateFinalSummary")){
     //     finalSummary = step.generateFinalSummary
@@ -315,7 +356,7 @@ for await (const step of await app.stream(
 }
 
 
-console.log("final summary:",finalSummary)
+console.log("final summary:", finalSummary)
 
 
 /*
