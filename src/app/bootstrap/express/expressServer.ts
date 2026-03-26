@@ -10,6 +10,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import { UserRepository } from "../http/controllers/auth/repository/userRepository";
 import { Router } from "express";
 import { apiV1 } from "src/app/routes/apiV1";
+import MongoStore from "connect-mongo";
 
 
 export function expressServer(app: Express, PORT: number) {
@@ -37,6 +38,14 @@ export function expressServer(app: Express, PORT: number) {
   });
 
   const sess = {
+
+store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_CONNECTION_URL,
+    dbName: "notebooklm",
+    collectionName: "sessions"
+}),
+
+
     secret : process.env.COOKIE_KEY as string,
     resave : false,
     saveUninitialized : true,
