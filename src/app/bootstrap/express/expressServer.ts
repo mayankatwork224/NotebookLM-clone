@@ -7,8 +7,16 @@ import { NextFunction, Response, Request } from "express";
 import passport from "passport";
 import session from "express-session";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
+import { UserRepository } from "../http/controllers/auth/repository/userRepository";
+import { Router } from "express";
+import { apiV1 } from "src/app/routes/apiV1";
+
 
 export function expressServer(app: Express, PORT: number) {
+  
+  // create instance of router
+  const router = Router()
+  
   app.use(
     cors({
       origin: "*",
@@ -16,10 +24,13 @@ export function expressServer(app: Express, PORT: number) {
     }),
   );
 
-
-
+  
+  
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+
+  apiV1(app,router)
 
   app.get("/", (req: Request, res: Response) => {
     res.json({ "message": "express server is up and running" });
@@ -65,8 +76,12 @@ export function expressServer(app: Express, PORT: number) {
           // The function in order to store the user inside the database 
        try {
           // Your user creation logic here
-          const user = profile; // placeholder
-          console.log('create user:', user);
+          // const user = profile; // placeholder
+          // console.log('create user:', user);
+
+          const userRepo = UserRepository.getInstance();
+          const user = await userRepo.createUser(profile,{accessToken, refreshToken});
+
           return done(null, user);
         } catch (error) {
           return done(error, null);
